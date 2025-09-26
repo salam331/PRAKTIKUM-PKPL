@@ -65,7 +65,7 @@ include 'koneksi.php';
             echo "<script>alert('Login Berhasil');</script>";
 
             if (isset($_SESSION["keranjang"]) or !empty($_SESSION["keranjang"])) {
-                echo "<script>location='checkout.php';</script>";
+                echo "<script>location='index.php';</script>";
             }else{
                 echo "<script>location='riwayat.php';</script>";
             }
