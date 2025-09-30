@@ -36,6 +36,9 @@ include 'koneksi.php';
                                 <input type="password" class="form-control" name="password">
                             </div>
                             <button class="btn btn-primary" name="login">Login</button>
+                            <span class="pull-right">
+                                <a href="lupa_password.php">Lupa Password</a>
+                            </span>
                         </form>
                     </div>
                 </div>
@@ -49,35 +52,39 @@ include 'koneksi.php';
 
         $email = $_POST['email'];
         $password = $_POST['password'];
-        $ambil = $koneksi->query("SELECT * FROM pelanggan WHERE email_pelanggan = '$email' AND password_pelanggan = '$password'");
 
-        // ngitung akun yang ter ambil
-        $akunyangcocok = $ambil->num_rows;
+        // Gunakan prepared statement untuk keamanan
+        $stmt = $koneksi->prepare("SELECT * FROM pelanggan WHERE email_pelanggan = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-        // jika ada satu akun yang cocok maka login kan
-        if ($akunyangcocok == 1) {
+        // Jika email ditemukan (hasilnya 1 baris)
+        if ($result->num_rows == 1) {
+            $akun = $result->fetch_assoc();
 
-            // anda suksen login
-            // ingin mendapatkan akun dalam bentuk array
-            $akun = $ambil->fetch_assoc();
-            // simpan dalam session pelanggan
-            $_SESSION["pelanggan"] = $akun;
-            echo "<script>alert('Login Berhasil');</script>";
+            // Verifikasi password yang di-hash
+            if (password_verify($password, $akun['password_pelanggan'])) {
+                // Password cocok, login berhasil
+                $_SESSION["pelanggan"] = $akun;
+                echo "<script>alert('Login Berhasil');</script>";
 
-            if (isset($_SESSION["keranjang"]) or !empty($_SESSION["keranjang"])) {
-                echo "<script>location='checkout.php';</script>";
-            }else{
-                echo "<script>location='riwayat.php';</script>";
-            }
-
-        } else { // anda gagal login
+                if (isset($_SESSION["keranjang"]) && !empty($_SESSION["keranjang"])) {
+                    echo "<script>location='checkout.php';</script>";
+                } else {
+                    echo "<script>location='riwayat.php';</script>";
+                }
+                exit(); // Hentikan eksekusi setelah redirect
     
-            echo "<script>alert('Anda Gagal Login, Periksa Kembali Akun Anda');</script>";
+            } else {
+                // Password salah
+                echo "<script>alert('Anda Gagal Login, Email atau Password Salah');</script>";
+                echo "<script>location='login.php';</script>";
+            }
+        } else { // Email tidak ditemukan
+            echo "<script>alert('Anda Gagal Login, Email atau Password Salah');</script>";
             echo "<script>location='login.php';</script>";
-
         }
-
-
     }
     ?>
 
