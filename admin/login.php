@@ -49,23 +49,21 @@ include 'koneksi.php';
 
     <?php
     if (isset($_POST["login"])) {
-
         $email = $_POST['email'];
         $password = $_POST['password'];
 
-        // Gunakan prepared statement untuk keamanan
+        // Gunakan prepared statement untuk keamanan query
         $stmt = $koneksi->prepare("SELECT * FROM pelanggan WHERE email_pelanggan = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
 
-        // Jika email ditemukan (hasilnya 1 baris)
         if ($result->num_rows == 1) {
             $akun = $result->fetch_assoc();
 
-            // Verifikasi password yang di-hash
-            if (password_verify($password, $akun['password_pelanggan'])) {
-                // Password cocok, login berhasil
+            // Bandingkan langsung password input dengan password di database (plain text)
+            if ($password === $akun['password_pelanggan']) {
+                // Login berhasil
                 $_SESSION["pelanggan"] = $akun;
                 echo "<script>alert('Login Berhasil');</script>";
 
@@ -74,19 +72,20 @@ include 'koneksi.php';
                 } else {
                     echo "<script>location='riwayat.php';</script>";
                 }
-                exit(); // Hentikan eksekusi setelah redirect
-    
+                exit();
             } else {
                 // Password salah
                 echo "<script>alert('Anda Gagal Login, Email atau Password Salah');</script>";
                 echo "<script>location='login.php';</script>";
             }
-        } else { // Email tidak ditemukan
+        } else {
+            // Email tidak ditemukan
             echo "<script>alert('Anda Gagal Login, Email atau Password Salah');</script>";
             echo "<script>location='login.php';</script>";
         }
     }
     ?>
+
 
 </body>
 

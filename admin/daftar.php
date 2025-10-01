@@ -61,7 +61,7 @@
                             $password = $_POST['password'];
                             $alamat = $_POST['alamat'];
                             $telepon = $_POST['telepon'];
-                            $password_hash = password_hash($password, PASSWORD_DEFAULT);
+                            // $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
                             // kemudian cek apakah email sudah di gunakan sebelumnya atau belum
                             $ambil = $koneksi->query("SELECT * FROM pelanggan WHERE email_pelanggan = '$email'");
@@ -74,7 +74,7 @@
                                 //jika email belum terdaftar, maka simpan data ke database
                                 // insert ke dalam tabel pelanggan menggunakan query INSERT
                                 $koneksi->query("INSERT INTO pelanggan (email_pelanggan, password_pelanggan, nama_pelanggan, telepon_pelanggan, alamat_pelanggan) VALUES 
-                                ('$email', '$password_hash', '$nama', '$telepon', '$alamat')");
+                                ('$email', '$password', '$nama', '$telepon', '$alamat')");
 
                                 //tampilkan alertnya
                                 echo "<script>alert('Pendaftaran Berhasil, Silahkan Login');</script>";
