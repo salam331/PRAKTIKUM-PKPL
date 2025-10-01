@@ -128,6 +128,12 @@ font-size: 16px;">
                         include 'detailproduk.php';
                     } elseif ($_GET['halaman'] == "hapusfotoproduk") {
                         include 'hapusfotoproduk.php';
+                    } elseif ($_GET['halaman'] == "tambahkategori") {
+                        include 'tambahkategori.php';
+                    } elseif ($_GET['halaman'] == "hapuskategori") {
+                        include 'hapuskategori.php';
+                    } elseif ($_GET['halaman'] == "ubahkategori") {
+                        include 'ubahkategori.php';
                     }
                 } else {
                     include 'home.php';
